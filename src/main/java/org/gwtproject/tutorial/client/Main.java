@@ -56,4 +56,27 @@ public class Main extends Composite {
         content.add(item);
     }
 
+    @UiHandler("menuClearAll")
+    protected void menuClearAll(ClickEvent e) {
+        closeMenu();
+        content.clear();
+    }
+
+    @UiHandler("menuClearDone")
+    protected void menuClearDone(ClickEvent e) {
+        closeMenu();
+        for (int i = content.getWidgetCount() - 1; i > -1; i--) {
+            Item item = (Item) content.getWidget(i);
+            if (item.isDone()) {
+                content.remove(item);
+            }
+        }
+    }
+
+    private void closeMenu() {
+        if (drawerPanel.getNarrow()) {
+            drawerPanel.closeDrawer();
+        }
+    }
+
 }

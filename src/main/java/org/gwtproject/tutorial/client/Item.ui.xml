@@ -13,7 +13,7 @@
           font-weight: normal;
         }
         .description{
-	}
+	       }
       </ui:style>
       <g:HTMLPanel
         addStyleNames="vertical center-justified layout {style.item}">
