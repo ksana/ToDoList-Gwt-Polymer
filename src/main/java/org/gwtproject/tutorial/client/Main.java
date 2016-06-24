@@ -13,70 +13,69 @@ import com.vaadin.polymer.paper.widget.PaperInput;
 import com.vaadin.polymer.paper.widget.PaperTextarea;
 
 public class Main extends Composite {
-    interface MainUiBinder extends UiBinder<HTMLPanel, Main> {
+  interface MainUiBinder extends UiBinder<HTMLPanel, Main> {}
+
+  private static MainUiBinder ourUiBinder = GWT.create(MainUiBinder.class);
+
+  @UiField
+  PaperDrawerPanel drawerPanel;
+  @UiField
+  HTMLPanel content;
+
+  @UiField
+  PaperDialog addItemDialog;
+  @UiField
+  PaperInput titleInput;
+  @UiField
+  PaperTextarea descriptionInput;
+
+  public Main() {
+    initWidget(ourUiBinder.createAndBindUi(this));
+  }
+
+  @UiHandler("addButton")
+  protected void onAddButtonClick(ClickEvent e) {
+    addItemDialog.open();
+  }
+
+  @UiHandler("confirmAddButton")
+  protected void onConfirmAddButtonClick(ClickEvent e) {
+    if (!titleInput.getValue().isEmpty()) {
+      addItem(titleInput.getValue(), descriptionInput.getValue());
+      // clear text fields
+      titleInput.setValue("");
+      descriptionInput.setValue("");
     }
+  }
 
-    private static MainUiBinder ourUiBinder = GWT.create(MainUiBinder.class);
+  private void addItem(String title, String description) {
+    Item item = new Item();
+    item.setTitle(title);
+    item.setDescription(description);
+    content.add(item);
+  }
 
-    @UiField
-    PaperDrawerPanel drawerPanel;
-    @UiField
-    HTMLPanel content;
+  @UiHandler("menuClearAll")
+  protected void menuClearAll(ClickEvent e) {
+    closeMenu();
+    content.clear();
+  }
 
-    @UiField
-    PaperDialog addItemDialog;
-    @UiField
-    PaperInput titleInput;
-    @UiField
-    PaperTextarea descriptionInput;
-
-    public Main() {
-        initWidget(ourUiBinder.createAndBindUi(this));
+  @UiHandler("menuClearDone")
+  protected void menuClearDone(ClickEvent e) {
+    closeMenu();
+    for (int i = content.getWidgetCount() - 1; i > -1; i--) {
+      Item item = (Item) content.getWidget(i);
+      if (item.isDone()) {
+        content.remove(item);
+      }
     }
+  }
 
-    @UiHandler("addButton")
-    protected void onAddButtonClick(ClickEvent e) {
-        addItemDialog.open();
+  private void closeMenu() {
+    if (drawerPanel.getNarrow()) {
+      drawerPanel.closeDrawer();
     }
-
-    @UiHandler("confirmAddButton")
-    protected void onConfirmAddButtonClick(ClickEvent e) {
-        if (!titleInput.getValue().isEmpty()) {
-            addItem(titleInput.getValue(), descriptionInput.getValue());
-            // clear text fields
-            titleInput.setValue("");
-            descriptionInput.setValue("");
-        }
-    }
-
-    private void addItem(String title, String description) {
-        Item item = new Item();
-        item.setTitle(title);
-        item.setDescription(description);
-        content.add(item);
-    }
-
-    @UiHandler("menuClearAll")
-    protected void menuClearAll(ClickEvent e) {
-        closeMenu();
-        content.clear();
-    }
-
-    @UiHandler("menuClearDone")
-    protected void menuClearDone(ClickEvent e) {
-        closeMenu();
-        for (int i = content.getWidgetCount() - 1; i > -1; i--) {
-            Item item = (Item) content.getWidget(i);
-            if (item.isDone()) {
-                content.remove(item);
-            }
-        }
-    }
-
-    private void closeMenu() {
-        if (drawerPanel.getNarrow()) {
-            drawerPanel.closeDrawer();
-        }
-    }
+  }
 
 }
